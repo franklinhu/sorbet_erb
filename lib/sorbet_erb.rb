@@ -34,7 +34,7 @@ module SorbetErb
         # Partials must use strict locals
         next
       else
-        locals = "()"
+        locals ||= "()"
       end
 
       rel_output_dir = File.join(
