@@ -1,11 +1,26 @@
 # frozen_string_literal: true
 
+require 'erb'
 require 'fileutils'
 
 require_relative "sorbet_erb/code_extractor"
 require_relative "sorbet_erb/version"
 
 module SorbetErb
+
+  ERB_TEMPLATE = <<~END
+    # typed: true
+    class SorbetErb<%= class_suffix %> < ApplicationController
+      include ApplicationController::HelperMethods
+
+      def body<%= locals %>
+        <% lines.each do |line| %>
+          <%= line %>
+        <% end %>
+      end
+    end
+  END
+
   def self.extract_rb_from_erb(path, output_dir)
     puts "Extracting ruby from erb: #{path} -> #{output_dir}"
     Dir.glob(File.join(path, "**", "*.erb")).each do |p|
@@ -14,6 +29,13 @@ module SorbetErb
 
       extractor = CodeExtractor.new
       lines, locals = extractor.extract(File.read(p))
+
+      if pathname.basename.to_s.start_with?("_") && locals.nil?
+        # Partials must use strict locals
+        next
+      else
+        locals = "()"
+      end
 
       rel_output_dir = File.join(
         output_dir,
@@ -25,42 +47,14 @@ module SorbetErb
         rel_output_dir,
         "#{pathname.basename}.generated.rb",
       )
+      erb = ERB.new(ERB_TEMPLATE)
       File.open(output_path, "w") do |f|
-        # TODO: put this in an ERB template
-        f.write("# typed: true\n")
-        f.write("class SorbetErb#{SecureRandom.hex(6)} < ActionController::Base\n")
-
-        f.write("  include ActionView::Helpers::ActiveModelHelper\n")
-        f.write("  include ActionView::Helpers::AssetTagHelper\n")
-        f.write("  include ActionView::Helpers::AssetUrlHelper\n")
-        f.write("  include ActionView::Helpers::AtomFeedHelper\n")
-        f.write("  include ActionView::Helpers::CacheHelper\n")
-        f.write("  include ActionView::Helpers::CaptureHelper\n")
-        f.write("  include ActionView::Helpers::ContentExfiltrationPreventionHelper\n")
-        f.write("  include ActionView::Helpers::CspHelper\n")
-        f.write("  include ActionView::Helpers::CsrfHelper\n")
-        f.write("  include ActionView::Helpers::DateHelper\n")
-        f.write("  include ActionView::Helpers::DebugHelper\n")
-        f.write("  include ActionView::Helpers::FormHelper\n")
-        f.write("  include ActionView::Helpers::FormOptionsHelper\n")
-        f.write("  include ActionView::Helpers::FormTagHelper\n")
-        f.write("  include ActionView::Helpers::JavaScriptHelper\n")
-        f.write("  include ActionView::Helpers::NumberHelper\n")
-        f.write("  include ActionView::Helpers::OutputSafetyHelper\n")
-        f.write("  include ActionView::Helpers::RenderingHelper\n")
-        f.write("  include ActionView::Helpers::SanitizeHelper\n")
-        f.write("  include ActionView::Helpers::TagHelper\n")
-        f.write("  include ActionView::Helpers::TextHelper\n")
-        f.write("  include ActionView::Helpers::TranslationHelper\n")
-        f.write("  include ActionView::Helpers::UrlHelper\n")
-        f.write("  include GeneratedPathHelpersModule\n")
-        f.write("  def body#{locals}\n")
-        lines.each do |line|
-          f.write(line)
-          f.write("\n")
-        end
-        f.write("  end\n")
-        f.write("end\n")
+        result = erb.result_with_hash(
+          class_suffix: SecureRandom.hex(6),
+          locals: locals,
+          lines: lines,
+        )
+        f.write(result)
       end
     end
   end

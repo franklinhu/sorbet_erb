@@ -30,7 +30,7 @@ module SorbetErb
 
     def initialize
       @output = []
-      @locals = "()"
+      @locals = nil
     end
 
     def handler_missing(node)
