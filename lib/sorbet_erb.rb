@@ -22,6 +22,9 @@ module SorbetErb
   END
 
   def self.extract_rb_from_erb(path, output_dir)
+    puts "Clearing output directory"
+    FileUtils.rm_rf(output_dir)
+
     puts "Extracting ruby from erb: #{path} -> #{output_dir}"
     Dir.glob(File.join(path, "**", "*.erb")).each do |p|
       puts "Processing #{p}"
