@@ -13,7 +13,7 @@ module SorbetErb
       pathname = Pathname.new(p)
 
       extractor = CodeExtractor.new
-      lines = extractor.extract(File.read(p))
+      lines, locals = extractor.extract(File.read(p))
 
       rel_output_dir = File.join(
         output_dir,
@@ -54,7 +54,7 @@ module SorbetErb
         f.write("  include ActionView::Helpers::TranslationHelper\n")
         f.write("  include ActionView::Helpers::UrlHelper\n")
         f.write("  include GeneratedPathHelpersModule\n")
-        f.write("  def body\n")
+        f.write("  def body#{locals}\n")
         lines.each do |line|
           f.write(line)
           f.write("\n")

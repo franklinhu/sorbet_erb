@@ -14,7 +14,8 @@ class CodeExtractorTest < Minitest::Spec
         END
         output: [
           " value ",
-        ]
+        ],
+        locals: "()",
       },
       {
         name: "expression",
@@ -24,6 +25,7 @@ class CodeExtractorTest < Minitest::Spec
         output: [
           " @something ",
         ],
+        locals: "()",
       },
       {
         name: "comment",
@@ -31,6 +33,7 @@ class CodeExtractorTest < Minitest::Spec
         <%# comment %>
         END
         output: [],
+        locals: "()",
       },
       {
         name: "for loop",
@@ -44,12 +47,25 @@ class CodeExtractorTest < Minitest::Spec
           " item.name ",
           " end ",
         ],
+        locals: "()",
+      },
+      {
+        name: "strict locals - no defaults",
+        input: <<~END,
+        <%# locals: (a:, b:) %>
+        <%= a %>
+        END
+        output: [
+          " a ",
+        ],
+        locals: "(a:, b:)",
       },
     ]
     test_cases.each do |tc|
       e = SorbetErb::CodeExtractor.new
-      actual = e.extract(tc[:input])
+      actual, locals = e.extract(tc[:input])
       assert_equal(tc[:output], actual, tc[:name])
+      assert_equal(tc[:locals], locals, tc[:name])
     end
   end
 end
