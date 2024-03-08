@@ -66,7 +66,7 @@ module SorbetErb
         result = erb.result_with_hash(
           class_suffix: SecureRandom.hex(6),
           locals: locals,
-          extra_includes: config[:extra_includes] || [],
+          extra_includes: config['extra_includes'] || [],
           lines: lines
         )
         f.write(result)
