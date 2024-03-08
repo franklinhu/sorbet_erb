@@ -1,24 +1,38 @@
 # SorbetErb
 
-TODO: Delete this and the text below, and describe your gem
+`sorbet_erb` parses Rails ERB files and extracts the Ruby code so that
+you can run Sorbet typechecking over them.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/sorbet_erb`. To experiment with that code, run `bin/console` for an interactive prompt.
+Currently this only supports Rails applications since it generates Ruby
+scoped with a Rails `ApplicationController`. Feel free to file an issue
+if you're interested in using this in other contexts.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+This gem isn't published to RubyGems yet, so you need to depend
+directly on the git repository:
 
-Install the gem and add to the application's Gemfile by executing:
+```
+gem 'sorbet_enum', git: 'https://github.com/franklinhu/sorbet_enum'
+```
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+After installing the gem, run `bundle binstubs sorbet_erb` to install
+a helper script under `bin/sorbet_erb`.
 
 ## Usage
 
-TODO: Write usage instructions here
+```
+bin/sorbet_erb input_dir output_dir
+```
+
+You'll most likely want to pass in your Rails app directory as input
+and use `sorbet/erb` as your output directory. Don't forget to add
+`sorbet/erb` to your `.gitignore`.
+
+```
+bin/sorbet_erb ./app ./sorbet/erb
+```
+
 
 ## Development
 
@@ -28,4 +42,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/sorbet_erb.
+Bug reports and pull requests are welcome on GitHub at https://github.com/franklinhu/sorbet_erb.
