@@ -20,6 +20,8 @@ module SorbetErb
   ERB_TEMPLATE = <<~ERB_TEMPLATE
     # typed: true
     class SorbetErb<%= class_suffix %> < ApplicationController
+      include ActionView::Helpers
+      include ApplicationController::HelperMethods
       <% extra_includes.each do |i| %>
         include <%= i %>
       <% end %>
