@@ -56,10 +56,10 @@ module SorbetErb
     puts 'Clearing output directory'
     FileUtils.rm_rf(output_dir)
 
-    paths = input_dirs.flat_map do |d|
-      Dir.glob(File.join(d, '**', '*.erb'))
+    input_dir_to_paths = input_dirs.flat_map do |d|
+      [d, Dir.glob(File.join(d, '**', '*.erb'))]
     end
-    paths.each do |p|
+    input_dir_to_paths.each do |d, p|
       puts "Processing #{p}"
       pathname = Pathname.new(p)
 
@@ -74,7 +74,7 @@ module SorbetErb
 
       rel_output_dir = File.join(
         output_dir,
-        pathname.dirname.relative_path_from(path)
+        pathname.dirname.relative_path_from(d)
       )
       FileUtils.mkdir_p(rel_output_dir)
 
