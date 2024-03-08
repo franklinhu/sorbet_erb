@@ -9,6 +9,12 @@ require_relative "sorbet_erb/version"
 
 module SorbetErb
 
+  USAGE = <<~END
+    Usage: sorbet_erb input_dir output_dir
+      input_dir - where to scan for ERB files
+      output_dir - where to write files with Ruby extracted from ERB
+  END
+
   ERB_TEMPLATE = <<~END
     # typed: true
     class SorbetErb<%= class_suffix %> < ApplicationController
@@ -66,6 +72,11 @@ module SorbetErb
   def self.start(argv)
     input = argv[0]
     output = argv[1]
+
+    if input.nil? || output.nil?
+      $stderr.puts USAGE
+      exit(1)
+    end
     SorbetErb.extract_rb_from_erb(input, output)
   end
 end
