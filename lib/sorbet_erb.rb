@@ -8,13 +8,13 @@ require_relative 'sorbet_erb/code_extractor'
 require_relative 'sorbet_erb/version'
 
 module SorbetErb
-  USAGE = <<~END
+  USAGE = <<~USAGE
     Usage: sorbet_erb input_dir output_dir
       input_dir - where to scan for ERB files
       output_dir - where to write files with Ruby extracted from ERB
-  END
+  USAGE
 
-  ERB_TEMPLATE = <<~END
+  ERB_TEMPLATE = <<~ERB_TEMPLATE
     # typed: true
     class SorbetErb<%= class_suffix %> < ApplicationController
       include ApplicationController::HelperMethods
@@ -25,7 +25,7 @@ module SorbetErb
         <% end %>
       end
     end
-  END
+  ERB_TEMPLATE
 
   def self.extract_rb_from_erb(path, output_dir)
     puts 'Clearing output directory'

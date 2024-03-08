@@ -7,11 +7,11 @@ class CodeExtractorTest < Minitest::Spec
     test_cases = [
       {
         name: 'normal code',
-        input: <<~END,
+        input: <<~INPUT,
           <div>
             <% value -%>
           </div>
-        END
+        INPUT
         output: [
           ' value '
         ],
@@ -19,9 +19,9 @@ class CodeExtractorTest < Minitest::Spec
       },
       {
         name: 'expression',
-        input: <<~END,
+        input: <<~INPUT,
           <%= @something %>
-        END
+        INPUT
         output: [
           ' @something '
         ],
@@ -29,19 +29,19 @@ class CodeExtractorTest < Minitest::Spec
       },
       {
         name: 'comment',
-        input: <<~END,
+        input: <<~INPUT,
           <%# comment %>
-        END
+        INPUT
         output: [],
         locals: nil
       },
       {
         name: 'for loop',
-        input: <<~END,
+        input: <<~INPUT,
           <% collection.each do |item| %>
             <%= item.name %>
           <% end %>
-        END
+        INPUT
         output: [
           ' collection.each do |item| ',
           ' item.name ',
@@ -51,10 +51,10 @@ class CodeExtractorTest < Minitest::Spec
       },
       {
         name: 'strict locals - no defaults',
-        input: <<~END,
+        input: <<~INPUT,
           <%# locals: (a:, b:) %>
           <%= a %>
-        END
+        INPUT
         output: [
           ' a '
         ],
