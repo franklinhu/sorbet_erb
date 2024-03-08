@@ -11,6 +11,13 @@ require_relative 'sorbet_erb/version'
 module SorbetErb
   CONFIG_FILE_NAME = '.sorbet_erb.yml'
 
+  DEFAULT_CONFIG = {
+    'input_dirs' => ['app'],
+    'output_dir' => 'sorbet/erb',
+    'extra_includes' => [],
+    'extra_body' => '',
+  }
+
   USAGE = <<~USAGE
     Usage: sorbet_erb input_dir output_dir
       input_dir - where to scan for ERB files
@@ -36,14 +43,23 @@ module SorbetErb
     end
   ERB_TEMPLATE
 
-  def self.extract_rb_from_erb(path, output_dir)
+  def self.extract_rb_from_erb(input_dir, output_dir)
     config = read_config
+    input_dirs =
+      if input_dir
+        [input_dir]
+      else
+        config.fetch('input_dirs')
+      end
+    output_dir ||= config.fetch('output_dir')
 
     puts 'Clearing output directory'
     FileUtils.rm_rf(output_dir)
 
-    puts "Extracting ruby from erb: #{path} -> #{output_dir}"
-    Dir.glob(File.join(path, '**', '*.erb')).each do |p|
+    paths = input_dirs.flat_map do |d|
+      Dir.glob(File.join(path, '**', '*.erb'))
+    end
+    paths.each do |p|
       puts "Processing #{p}"
       pathname = Pathname.new(p)
 
@@ -71,8 +87,8 @@ module SorbetErb
         result = erb.result_with_hash(
           class_suffix: SecureRandom.hex(6),
           locals: locals,
-          extra_includes: config['extra_includes'] || [],
-          extra_body: config['extra_body'] || '',
+          extra_includes: config.fetch('extra_includes']),
+          extra_body: config.fetch('extra_body'),
           lines: lines
         )
         f.write(result)
@@ -82,21 +98,19 @@ module SorbetErb
 
   def self.read_config
     path = File.join(Dir.pwd, CONFIG_FILE_NAME)
-    if File.exist?(path)
-      Psych.safe_load_file(path)
-    else
-      {}
-    end
+    config =
+      if File.exist?(path)
+        Psych.safe_load_file(path)
+      else
+        {}
+      end
+    DEFAULT_CONFIG.merge(config)
   end
 
   def self.start(argv)
     input = argv[0]
     output = argv[1]
 
-    if input.nil? || output.nil?
-      warn USAGE
-      exit(1)
-    end
     SorbetErb.extract_rb_from_erb(input, output)
   end
 end
