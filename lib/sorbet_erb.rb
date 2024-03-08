@@ -57,7 +57,9 @@ module SorbetErb
     FileUtils.rm_rf(output_dir)
 
     input_dir_to_paths = input_dirs.flat_map do |d|
-      [d, Dir.glob(File.join(d, '**', '*.erb'))]
+      Dir.glob(File.join(d, '**', '*.erb')).map do |p|
+        [d, p]
+      end
     end
     input_dir_to_paths.each do |d, p|
       puts "Processing #{p}"
