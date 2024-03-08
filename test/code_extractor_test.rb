@@ -15,7 +15,7 @@ class CodeExtractorTest < Minitest::Spec
         output: [
           " value ",
         ],
-        locals: "()",
+        locals: nil,
       },
       {
         name: "expression",
@@ -25,7 +25,7 @@ class CodeExtractorTest < Minitest::Spec
         output: [
           " @something ",
         ],
-        locals: "()",
+        locals: nil,
       },
       {
         name: "comment",
@@ -33,7 +33,7 @@ class CodeExtractorTest < Minitest::Spec
         <%# comment %>
         END
         output: [],
-        locals: "()",
+        locals: nil,
       },
       {
         name: "for loop",
@@ -47,7 +47,7 @@ class CodeExtractorTest < Minitest::Spec
           " item.name ",
           " end ",
         ],
-        locals: "()",
+        locals: nil,
       },
       {
         name: "strict locals - no defaults",
@@ -65,7 +65,11 @@ class CodeExtractorTest < Minitest::Spec
       e = SorbetErb::CodeExtractor.new
       actual, locals = e.extract(tc[:input])
       assert_equal(tc[:output], actual, tc[:name])
-      assert_equal(tc[:locals], locals, tc[:name])
+      if tc[:locals].nil?
+        assert_nil(locals, tc[:name])
+      else
+        assert_equal(tc[:locals], locals, tc[:name])
+      end
     end
   end
 end
