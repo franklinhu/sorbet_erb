@@ -87,7 +87,7 @@ module SorbetErb
         result = erb.result_with_hash(
           class_suffix: SecureRandom.hex(6),
           locals: locals,
-          extra_includes: config.fetch('extra_includes']),
+          extra_includes: config.fetch('extra_includes'),
           extra_body: config.fetch('extra_body'),
           lines: lines
         )
