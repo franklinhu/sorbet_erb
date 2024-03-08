@@ -5,26 +5,23 @@ require 'better_html/parser'
 
 module SorbetErb
   class CodeExtractor
-    def initialize
-    end
+    def initialize; end
 
     def extract(input)
       buffer = Parser::Source::Buffer.new('(buffer)')
       buffer.source = input
       parser = BetterHtml::Parser.new(buffer)
 
-      output = ""
-
       p = CodeProcessor.new
       p.process(parser.ast)
-      return p.output, p.locals
+      [p.output, p.locals]
     end
   end
 
   class CodeProcessor
     include AST::Processor::Mixin
 
-    LOCALS_PREFIX = "locals: "
+    LOCALS_PREFIX = 'locals: '
 
     attr_accessor :output, :locals
 
@@ -43,16 +40,14 @@ module SorbetErb
       indicator_node = node.children.compact.find { |c| c.type == :indicator }
       code_node = node.children.compact.find { |c| c.type == :code }
 
-      if indicator_node.nil?
-        return process(code_node)
-      end
+      return process(code_node) if indicator_node.nil?
 
       indicator = indicator_node.children.first
       case indicator
-      when "#"
+      when '#'
         # Ignore comments if it's not strict locals
         code_text = code_node.children.first.strip
-        return if !code_text.start_with?(LOCALS_PREFIX)
+        return unless code_text.start_with?(LOCALS_PREFIX)
 
         # No need to parse the locals
         @locals = code_text.delete_prefix(LOCALS_PREFIX).strip
@@ -66,4 +61,3 @@ module SorbetErb
     end
   end
 end
-

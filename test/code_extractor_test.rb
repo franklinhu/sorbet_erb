@@ -1,65 +1,65 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require 'test_helper'
 
 class CodeExtractorTest < Minitest::Spec
   it 'handles erb' do
     test_cases = [
       {
-        name: "normal code",
-        input: <<~END,
+        name: 'normal code',
+        input: <<~INPUT,
           <div>
             <% value -%>
           </div>
-        END
+        INPUT
         output: [
-          " value ",
+          ' value '
         ],
-        locals: nil,
+        locals: nil
       },
       {
-        name: "expression",
-        input: <<~END,
+        name: 'expression',
+        input: <<~INPUT,
           <%= @something %>
-        END
+        INPUT
         output: [
-          " @something ",
+          ' @something '
         ],
-        locals: nil,
+        locals: nil
       },
       {
-        name: "comment",
-        input: <<~END,
-        <%# comment %>
-        END
+        name: 'comment',
+        input: <<~INPUT,
+          <%# comment %>
+        INPUT
         output: [],
-        locals: nil,
+        locals: nil
       },
       {
-        name: "for loop",
-        input: <<~END,
-        <% collection.each do |item| %>
-          <%= item.name %>
-        <% end %>
-        END
+        name: 'for loop',
+        input: <<~INPUT,
+          <% collection.each do |item| %>
+            <%= item.name %>
+          <% end %>
+        INPUT
         output: [
-          " collection.each do |item| ",
-          " item.name ",
-          " end ",
+          ' collection.each do |item| ',
+          ' item.name ',
+          ' end '
         ],
-        locals: nil,
+        locals: nil
       },
       {
-        name: "strict locals - no defaults",
-        input: <<~END,
-        <%# locals: (a:, b:) %>
-        <%= a %>
-        END
+        name: 'strict locals - no defaults',
+        input: <<~INPUT,
+          <%# locals: (a:, b:) %>
+          <%= a %>
+        INPUT
         output: [
-          " a ",
+          ' a '
         ],
-        locals: "(a:, b:)",
-      },
+        locals: '(a:, b:)'
+      }
     ]
     test_cases.each do |tc|
       e = SorbetErb::CodeExtractor.new
