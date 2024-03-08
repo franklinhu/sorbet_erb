@@ -15,8 +15,8 @@ module SorbetErb
     'input_dirs' => ['app'],
     'output_dir' => 'sorbet/erb',
     'extra_includes' => [],
-    'extra_body' => '',
-  }
+    'extra_body' => ''
+  }.freeze
 
   USAGE = <<~USAGE
     Usage: sorbet_erb input_dir output_dir
@@ -57,7 +57,7 @@ module SorbetErb
     FileUtils.rm_rf(output_dir)
 
     paths = input_dirs.flat_map do |d|
-      Dir.glob(File.join(path, '**', '*.erb'))
+      Dir.glob(File.join(d, '**', '*.erb'))
     end
     paths.each do |p|
       puts "Processing #{p}"
