@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary = 'Extracts Ruby code from ERB files for Sorbet'
   spec.description = 'Extracts Ruby code from ERB files so you can run Sorbet over them'
   spec.homepage = 'https://github.com/franklinhu/sorbet_erb'
-  spec.required_ruby_version = '>= 2.6.0'
+  spec.required_ruby_version = '>= 3.0.0'
 
   spec.metadata['allowed_push_host'] = "TODO: Set to your gem server 'https://example.com'"
 
