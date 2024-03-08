@@ -19,7 +19,8 @@ module SorbetErb
 
   ERB_TEMPLATE = <<~ERB_TEMPLATE
     # typed: true
-    class SorbetErb<%= class_suffix %> < ActionView::Base
+    class SorbetErb<%= class_suffix %> < ApplicationController
+      extend ActionView::Base
       <% extra_includes.each do |i| %>
         include <%= i %>
       <% end %>
