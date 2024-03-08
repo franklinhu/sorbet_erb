@@ -32,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'better_html', '~> 2.0.2'
+  spec.add_dependency 'psych'
 end

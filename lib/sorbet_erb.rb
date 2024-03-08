@@ -3,6 +3,7 @@
 require 'erb'
 require 'fileutils'
 require 'pathname'
+require 'psych'
 
 require_relative 'sorbet_erb/code_extractor'
 require_relative 'sorbet_erb/version'

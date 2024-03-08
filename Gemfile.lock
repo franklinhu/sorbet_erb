@@ -3,6 +3,7 @@ PATH
   specs:
     sorbet_erb (0.1.0)
       better_html (~> 2.0.2)
+      psych
 
 GEM
   remote: https://rubygems.org/
@@ -59,6 +60,8 @@ GEM
     parser (3.3.0.5)
       ast (~> 2.4.1)
       racc
+    psych (5.1.2)
+      stringio
     racc (1.7.3)
     rails-dom-testing (2.2.0)
       activesupport (>= 5.0.0)
@@ -87,6 +90,7 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     smart_properties (1.17.0)
+    stringio (3.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
