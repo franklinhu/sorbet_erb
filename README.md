@@ -1,11 +1,19 @@
 # SorbetErb
 
 `sorbet_erb` parses Rails ERB files and extracts the Ruby code so that
-you can run Sorbet typechecking over them.
+you can run Sorbet typechecking over them. This assumes you're already
+using Sorbet and Tapioca together to generate RBI.
 
 Currently this only supports Rails applications since it generates Ruby
 scoped with a Rails `ApplicationController`. Feel free to file an issue
 if you're interested in using this in other contexts.
+
+### Limitations
+- You must manually specify extra_includes that aren't covered by Tapioca
+- Does not handle ViewComponent methods (e.g. `with_*`)
+- Rails partials (files beginning with `_`) must use strict locals.
+  sorbet_erb will skip them if there are no strict locals defined.
+- local_assigns are not supported. Use strict locals instead.
 
 ## Installation
 
