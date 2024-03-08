@@ -23,6 +23,9 @@ module SorbetErb
       <% extra_includes.each do |i| %>
         include <%= i %>
       <% end %>
+
+      <%= extra_body %>
+
       def body<%= locals %>
         <% lines.each do |line| %>
           <%= line %>
@@ -67,6 +70,7 @@ module SorbetErb
           class_suffix: SecureRandom.hex(6),
           locals: locals,
           extra_includes: config['extra_includes'] || [],
+          extra_body: config['extra_body'] || '',
           lines: lines
         )
         f.write(result)
