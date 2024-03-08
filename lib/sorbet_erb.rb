@@ -8,6 +8,8 @@ require_relative 'sorbet_erb/code_extractor'
 require_relative 'sorbet_erb/version'
 
 module SorbetErb
+  CONFIG_FILE_NAME = '.sorbet_erb.yml'
+
   USAGE = <<~USAGE
     Usage: sorbet_erb input_dir output_dir
       input_dir - where to scan for ERB files
@@ -17,6 +19,9 @@ module SorbetErb
   ERB_TEMPLATE = <<~ERB_TEMPLATE
     # typed: true
     class SorbetErb<%= class_suffix %> < ActionView::Base
+      <% extra_includes.each do |i| %>
+        include <%= i %>
+      <% end %>
       def body<%= locals %>
         <% lines.each do |line| %>
           <%= line %>
@@ -26,6 +31,8 @@ module SorbetErb
   ERB_TEMPLATE
 
   def self.extract_rb_from_erb(path, output_dir)
+    config = read_config
+
     puts 'Clearing output directory'
     FileUtils.rm_rf(output_dir)
 
@@ -58,10 +65,20 @@ module SorbetErb
         result = erb.result_with_hash(
           class_suffix: SecureRandom.hex(6),
           locals: locals,
+          extra_includes: config[:extra_includes] || [],
           lines: lines
         )
         f.write(result)
       end
+    end
+  end
+
+  def self.read_config
+    path = File.join(Dir.pwd, CONFIG_FILE_NAME)
+    if File.exist?(path)
+      Psych.safe_load_file(path)
+    else
+      {}
     end
   end
 
