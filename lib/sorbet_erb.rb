@@ -16,9 +16,7 @@ module SorbetErb
 
   ERB_TEMPLATE = <<~ERB_TEMPLATE
     # typed: true
-    class SorbetErb<%= class_suffix %> < ApplicationController
-      include ApplicationController::HelperMethods
-
+    class SorbetErb<%= class_suffix %> < ActionView::Base
       def body<%= locals %>
         <% lines.each do |line| %>
           <%= line %>
