@@ -2,6 +2,7 @@
 
 require 'erb'
 require 'fileutils'
+require 'pathname'
 
 require_relative "sorbet_erb/code_extractor"
 require_relative "sorbet_erb/version"
@@ -61,11 +62,11 @@ module SorbetErb
       end
     end
   end
-end
 
-if __FILE__ == $PROGRAM_NAME
-  input = ARGV[0]
-  output = ARGV[1]
-  SorbetErb.extract_rb_from_erb(input, output)
+  def self.start(argv)
+    input = argv[0]
+    output = argv[1]
+    SorbetErb.extract_rb_from_erb(input, output)
+  end
 end
 
