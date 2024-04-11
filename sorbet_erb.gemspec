@@ -33,4 +33,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'better_html', '~> 2.0.2'
   spec.add_dependency 'psych'
+  spec.add_dependency 'tapioca', '~> 0.13.1'
 end
