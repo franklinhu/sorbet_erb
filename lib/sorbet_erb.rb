@@ -36,7 +36,10 @@ module SorbetErb
       <% end %>
 
       sig { returns(T::Hash[Symbol, T.untyped]) }
-      def local_assigns; end
+      def local_assigns
+        # Shim for typechecking
+        {}
+      end
 
       <%= extra_body %>
 
