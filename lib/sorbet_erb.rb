@@ -68,9 +68,8 @@ module SorbetErb
       extractor = CodeExtractor.new
       lines, locals = extractor.extract(File.read(p))
 
-      next if pathname.basename.to_s.start_with?('_') && locals.nil?
-
-      # Partials must use strict locals
+      # Partials and Turbo streams must use strict locals
+      next if requires_defined_locals(pathname.basename.to_s) && locals.nil?
 
       locals ||= '()'
 
@@ -107,6 +106,10 @@ module SorbetErb
         {}
       end
     DEFAULT_CONFIG.merge(config)
+  end
+
+  def self.requires_defined_locals(file_name)
+    file_name.start_with?('_') || file_name.end_with?('.turbo_stream.erb')
   end
 
   def self.start(argv)
