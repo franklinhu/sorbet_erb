@@ -64,7 +64,6 @@ module SorbetErb
       end
     end
     input_dir_to_paths.each do |d, p|
-      puts "Processing #{p}"
       pathname = Pathname.new(p)
 
       extractor = CodeExtractor.new
