@@ -28,11 +28,18 @@ module SorbetErb
   ERB_TEMPLATE = <<~ERB_TEMPLATE
     # typed: true
     class SorbetErb<%= class_suffix %> < ApplicationController
+      extend T::Sig
       include ActionView::Helpers
       include ApplicationController::HelperMethods
       <% extra_includes.each do |i| %>
         include <%= i %>
       <% end %>
+
+      sig { returns(T::Hash[Symbol, T.untyped]) }
+      def local_assigns
+        # Shim for typechecking
+        {}
+      end
 
       <%= extra_body %>
 

@@ -9,11 +9,11 @@ scoped with a Rails `ApplicationController`. Feel free to file an issue
 if you're interested in using this in other contexts.
 
 ### Limitations
+
 - You must manually specify extra_includes that aren't covered by Tapioca
-- Does not handle ViewComponent methods (e.g. `with_*`)
-- Rails partials (files beginning with `_`) must use strict locals.
-  sorbet_erb will skip them if there are no strict locals defined.
-- local_assigns are not supported. Use strict locals instead.
+- Rails partials (files beginning with `_`) and Turbo streams must use
+  strict locals. sorbet_erb will skip them if there are no strict locals
+  defined unless you set `skip_missing_locals`.
 
 ## Installation
 
@@ -40,7 +40,6 @@ and use `sorbet/erb` as your output directory. Don't forget to add
 ```
 bin/sorbet_erb ./app ./sorbet/erb
 ```
-
 
 ## Development
 
