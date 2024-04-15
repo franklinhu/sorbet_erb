@@ -15,7 +15,8 @@ module SorbetErb
     'input_dirs' => ['app'],
     'output_dir' => 'sorbet/erb',
     'extra_includes' => [],
-    'extra_body' => ''
+    'extra_body' => '',
+    'skip_missing_locals' => true
   }.freeze
 
   USAGE = <<~USAGE
@@ -52,6 +53,7 @@ module SorbetErb
         config.fetch('input_dirs')
       end
     output_dir ||= config.fetch('output_dir')
+    skip_missing_locals = config.fetch('skip_missing_locals')
 
     puts 'Clearing output directory'
     FileUtils.rm_rf(output_dir)
@@ -62,15 +64,13 @@ module SorbetErb
       end
     end
     input_dir_to_paths.each do |d, p|
-      puts "Processing #{p}"
       pathname = Pathname.new(p)
 
       extractor = CodeExtractor.new
       lines, locals = extractor.extract(File.read(p))
 
-      next if pathname.basename.to_s.start_with?('_') && locals.nil?
-
-      # Partials must use strict locals
+      # Partials and Turbo streams must use strict locals
+      next if requires_defined_locals(pathname.basename.to_s) && locals.nil? && skip_missing_locals
 
       locals ||= '()'
 
@@ -107,6 +107,10 @@ module SorbetErb
         {}
       end
     DEFAULT_CONFIG.merge(config)
+  end
+
+  def self.requires_defined_locals(file_name)
+    file_name.start_with?('_') || file_name.end_with?('.turbo_stream.erb')
   end
 
   def self.start(argv)
