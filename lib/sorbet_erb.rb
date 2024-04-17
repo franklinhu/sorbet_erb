@@ -139,7 +139,7 @@ module SorbetErb
   end
 
   def self.constantize_view_component_path_name(path_name)
-    if path_name.basename == path_name.dirname.basename
+    if path_name.basename.to_s.delete_suffix('.html.erb') == path_name.dirname.basename.to_s
       # ViewComponent templates can be stored in a nested directory structure:
       #   app/components/
       #     action_menu/

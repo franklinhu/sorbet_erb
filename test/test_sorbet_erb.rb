@@ -10,7 +10,12 @@ class TestSorbetErb < Minitest::Test
   def test_constantize_path_name
     assert_equal(
       'Module::Class',
-      SorbetErb.constantize_path_name('module/class.html.erb')
+      SorbetErb.constantize_view_component_path_name(Pathname.new('module/class.html.erb'))
+    )
+
+    assert_equal(
+      'Module::Class',
+      SorbetErb.constantize_view_component_path_name(Pathname.new('module/class/class.html.erb'))
     )
   end
 end
