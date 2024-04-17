@@ -102,7 +102,7 @@ module SorbetErb
         # it has access to slots.
         # it has access to slots.
         module_name = 'ViewComponentSlotablesMethodsModule'
-        extra_includes << "#{constantize_file_name(pathname.basename)}::#{module_name}"
+        extra_includes << "#{constantize_path_name(pathname.relative_path_from(d))}::#{module_name}"
       end
 
       erb = ERB.new(ERB_TEMPLATE)
@@ -138,8 +138,8 @@ module SorbetErb
     dir == 'app/components'
   end
 
-  def self.constantize_file_name(file_name)
-    ActiveSupport::Inflector.camelize(file_name.to_s.delete_suffix('.html.erb'))
+  def self.constantize_path_name(path_name)
+    ActiveSupport::Inflector.camelize(path_name.to_s.delete_suffix('.html.erb'))
   end
 
   def self.start(argv)
