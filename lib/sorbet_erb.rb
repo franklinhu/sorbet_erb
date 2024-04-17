@@ -101,7 +101,7 @@ module SorbetErb
         # it has access to slots.
         # it has access to slots.
         module_name = 'ViewComponentSlotablesMethodsModule'
-        extra_includes << "constantize_file_name(pathname.basename)::#{module_name}"
+        extra_includes << "#{constantize_file_name(pathname.basename)}::#{module_name}"
       end
 
       erb = ERB.new(ERB_TEMPLATE)
