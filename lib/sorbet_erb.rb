@@ -138,7 +138,7 @@ module SorbetErb
   end
 
   def self.constantize_file_name(file_name)
-    file_name.strip('.html.erb').camelize
+    file_name.to_s.delete_suffix('.html.erb').camelize
   end
 
   def self.start(argv)
