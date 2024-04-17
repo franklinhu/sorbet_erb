@@ -29,37 +29,37 @@ module Tapioca
         sig { override.void }
         def decorate
           root.create_path(constant) do |klass|
-            T.unsafe(constant).registered_slots.each do |name, config|
-              renderable_type = config[:renderable]
-              renderable = T.let(
-                case renderable_type
-                when String
-                  renderable_type
-                when Class
-                  T.must(renderable_type.name)
-                else
-                  'T.untyped'
-                end,
-                String
-              )
+            klass.create_module(MODULE_NAME) do |methods_mod|
+              T.unsafe(constant).registered_slots.each do |name, config|
+                renderable_type = config[:renderable]
+                renderable = T.let(
+                    case renderable_type
+                    when String
+                    renderable_type
+                    when Class
+                    T.must(renderable_type.name)
+                    else
+                    'T.untyped'
+                    end,
+                    String
+                )
 
-              is_many = T.let(config[:collection], T::Boolean)
-              return_type =
-                if is_many
-                  "T::Enumerable[#{renderable}]"
-                else
-                  renderable
+                is_many = T.let(config[:collection], T::Boolean)
+                return_type =
+                    if is_many
+                    "T::Enumerable[#{renderable}]"
+                    else
+                    renderable
+                    end
+
+                klass.create_module(SLOTABLES_MODULE_NAME) do |mod|
+                    generate_instance_methods(mod, name.to_s, return_type, is_many)
                 end
-
-              klass.create_module(SLOTABLES_MODULE_NAME) do |mod|
-                generate_instance_methods(mod, name.to_s, return_type, is_many)
+                methods_mod.create_include(SLOTABLES_MODULE_NAME)
               end
-
-              klass.create_module(MODULE_NAME) do |mod|
-                mod.create_include(SLOTABLES_MODULE_NAME)
-              end
-              klass.create_include(MODULE_NAME)
             end
+
+            klass.create_include(MODULE_NAME)
           end
         end
 
