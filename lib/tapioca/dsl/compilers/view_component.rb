@@ -22,7 +22,7 @@ module Tapioca
           sig { override.returns(T::Enumerable[Module]) }
           def gather_constants
             all_classes
-              .select { |c| c < ViewComponent::Base && c.name != 'ViewComponent::Base' }
+              .select { |c| c < ::ViewComponent::Base && c.name != 'ViewComponent::Base' }
           end
         end
 
