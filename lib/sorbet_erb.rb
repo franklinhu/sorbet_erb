@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/inflector'
 require 'erb'
 require 'fileutils'
 require 'pathname'
@@ -138,7 +139,7 @@ module SorbetErb
   end
 
   def self.constantize_file_name(file_name)
-    file_name.to_s.delete_suffix('.html.erb').camelize
+    ActiveSupport::Inflector.camelize(file_name.to_s.delete_suffix('.html.erb'))
   end
 
   def self.start(argv)
