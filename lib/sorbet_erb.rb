@@ -94,7 +94,7 @@ module SorbetErb
         rel_output_dir,
         "#{pathname.basename}.generated.rb"
       )
-      extra_includes = config.fetch('extra_includes')
+      extra_includes = config.fetch('extra_includes').clone
       if view_component_directory?(d)
         # ViewComponents have both a Ruby class that extends ApplicationComponent
         # and an ERB template. When generating the SorbetErb, we include
