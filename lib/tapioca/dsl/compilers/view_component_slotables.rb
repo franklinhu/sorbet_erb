@@ -13,6 +13,8 @@ module Tapioca
 
         ConstantType = type_member { { fixed: T.class_of(::ViewComponent::Slotable) } }
 
+        MODULE_NAME = 'ViewComponentSlotablesMethodsModule'
+
         class << self
           extend T::Sig
 
@@ -48,11 +50,10 @@ module Tapioca
                   renderable
                 end
 
-              module_name = 'ViewComponentSlotablesMethodsModule'
-              klass.create_module(module_name) do |mod|
+              klass.create_module(MODULE_NAME) do |mod|
                 generate_instance_methods(mod, name.to_s, return_type, is_many)
               end
-              klass.create_include(module_name)
+              klass.create_include(MODULE_NAME)
             end
           end
         end
