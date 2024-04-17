@@ -83,6 +83,7 @@ module SorbetErb
 
       rel_output_dir = File.join(
         output_dir,
+        d,
         pathname.dirname.relative_path_from(d)
       )
       FileUtils.mkdir_p(rel_output_dir)
