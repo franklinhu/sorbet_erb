@@ -56,7 +56,7 @@ module Tapioca
               end
 
               klass.create_module(MODULE_NAME) do |mod|
-                mod.create_include(SLOTABLES_MODULE)
+                mod.create_include(SLOTABLES_MODULE_NAME)
               end
               klass.create_include(MODULE_NAME)
             end
