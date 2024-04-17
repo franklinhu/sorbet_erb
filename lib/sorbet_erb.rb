@@ -8,7 +8,7 @@ require 'psych'
 
 require_relative 'sorbet_erb/code_extractor'
 require_relative 'sorbet_erb/version'
-require_relative 'tapioca/dsl/compilers/view_component_slotables'
+require_relative 'tapioca/dsl/compilers/view_component'
 
 module SorbetErb
   CONFIG_FILE_NAME = '.sorbet_erb.yml'
@@ -102,7 +102,7 @@ module SorbetErb
         # it has access to slots.
         # it has access to slots.
         module_name = constantize_view_component_path_name(pathname.relative_path_from(d))
-        extra_includes << "#{module_name}::ViewComponentSlotablesMethodsModule"
+        extra_includes << "#{module_name}::ViewComponentMethodsModule"
       end
 
       erb = ERB.new(ERB_TEMPLATE)

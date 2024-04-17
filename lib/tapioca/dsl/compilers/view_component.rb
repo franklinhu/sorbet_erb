@@ -6,14 +6,15 @@ return unless defined?(ViewComponent)
 module Tapioca
   module Dsl
     module Compilers
-      # Generates RBI for ViewComponent::Slotable
+      # Generates RBI for ViewComponent
       # See https://github.com/ViewComponent/view_component/blob/main/lib/view_component/slotable.rb
-      class ViewComponentSlotables < Compiler
+      class ViewComponent < Compiler
         extend T::Sig
 
         ConstantType = type_member { { fixed: T.class_of(::ViewComponent::Slotable) } }
 
-        MODULE_NAME = 'ViewComponentSlotablesMethodsModule'
+        MODULE_NAME = 'ViewComponentMethodsModule'
+        SLOTABLES_MODULE_NAME = 'ViewComponentSlotablesMethodsModule'
 
         class << self
           extend T::Sig
@@ -21,7 +22,7 @@ module Tapioca
           sig { override.returns(T::Enumerable[Module]) }
           def gather_constants
             all_classes
-              .select { |c| c < ViewComponent::Slotable && c.name != 'ViewComponent::Base' }
+              .select { |c| c < ViewComponent::Base && c.name != 'ViewComponent::Base' }
           end
         end
 
@@ -50,8 +51,12 @@ module Tapioca
                   renderable
                 end
 
-              klass.create_module(MODULE_NAME) do |mod|
+              klass.create_module(SLOTABLES_MODULE_NAME) do |mod|
                 generate_instance_methods(mod, name.to_s, return_type, is_many)
+              end
+
+              klass.create_module(MODULE_NAME) do |mod|
+                mod.create_include(SLOTABLES_MODULE)
               end
               klass.create_include(MODULE_NAME)
             end
