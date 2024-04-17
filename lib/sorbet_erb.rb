@@ -7,6 +7,7 @@ require 'psych'
 
 require_relative 'sorbet_erb/code_extractor'
 require_relative 'sorbet_erb/version'
+require_relative 'tapioca/dsl/compiilers/view_component_slotables'
 
 module SorbetErb
   CONFIG_FILE_NAME = '.sorbet_erb.yml'
