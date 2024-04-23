@@ -59,6 +59,17 @@ class CodeExtractorTest < Minitest::Spec
           ' a '
         ],
         locals: '(a:, b:)'
+      },
+      {
+        name: 'strict locals - no space',
+        input: <<~INPUT,
+          <%# locals:(a:, b:) %>
+          <%= a %>
+        INPUT
+        output: [
+          ' a '
+        ],
+        locals: '(a:, b:)'
       }
     ]
     test_cases.each do |tc|

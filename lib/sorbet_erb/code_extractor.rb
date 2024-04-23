@@ -21,7 +21,7 @@ module SorbetErb
   class CodeProcessor
     include AST::Processor::Mixin
 
-    LOCALS_PREFIX = 'locals: '
+    LOCALS_PREFIX = 'locals:'
 
     attr_accessor :output, :locals
 
