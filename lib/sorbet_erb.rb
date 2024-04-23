@@ -13,6 +13,7 @@ module SorbetErb
 
   DEFAULT_CONFIG = {
     'input_dirs' => ['app'],
+    'exclude_paths' => [],
     'output_dir' => 'sorbet/erb',
     'extra_includes' => [],
     'extra_body' => '',
@@ -59,6 +60,7 @@ module SorbetErb
       else
         config.fetch('input_dirs')
       end
+    exclude_paths = config.fetch('exclude_paths')
     output_dir ||= config.fetch('output_dir')
     skip_missing_locals = config.fetch('skip_missing_locals')
 
@@ -72,6 +74,8 @@ module SorbetErb
     end
     input_dir_to_paths.each do |d, p|
       pathname = Pathname.new(p)
+
+      next if exclude_paths.any? { |p| p.include?(pathname.to_s) }
 
       extractor = CodeExtractor.new
       lines, locals = extractor.extract(File.read(p))
