@@ -35,7 +35,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
 
       constants = Tapioca::Dsl::Compilers::ViewComponentSlotables.gather_constants
       assert_equal(1, constants.count)
-      assert_equal("TestComponent", constants.first.name)
+      assert_equal('TestComponent', constants.first.name)
     end
   end
 
