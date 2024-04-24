@@ -3,12 +3,15 @@
 
 return unless defined?(ViewComponent)
 
+require 'sorbet-runtime'
+require 'tapioca/dsl'
+
 module Tapioca
   module Dsl
     module Compilers
       # Generates RBI for ViewComponent::Slotable
       # See https://github.com/ViewComponent/view_component/blob/main/lib/view_component/slotable.rb
-      class ViewComponentSlotables < Compiler
+      class ViewComponentSlotables < Tapioca::Dsl::Compiler
         extend T::Sig
 
         ConstantType = type_member { { fixed: T.class_of(::ViewComponent::Slotable) } }
