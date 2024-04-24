@@ -130,6 +130,10 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
+    view_component (3.12.1)
+      activesupport (>= 5.2.0, < 8.0)
+      concurrent-ruby (~> 1.0)
+      method_source (~> 1.0)
     yard (0.9.36)
     yard-sorbet (0.8.1)
       sorbet-runtime (>= 0.5)
@@ -145,6 +149,7 @@ DEPENDENCIES
   rake (~> 13.0)
   rubocop (~> 1.21)
   sorbet_erb!
+  view_component
 
 BUNDLED WITH
    2.5.5

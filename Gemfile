@@ -10,4 +10,6 @@ group :development, :test do
   gem 'pry-byebug', '~> 3.10.1'
   gem 'rake', '~> 13.0'
   gem 'rubocop', '~> 1.21'
+
+  gem 'view_component'
 end
