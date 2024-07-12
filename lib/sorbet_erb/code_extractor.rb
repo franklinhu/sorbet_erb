@@ -14,7 +14,7 @@ module SorbetErb
 
       p = CodeProcessor.new
       p.process(parser.ast)
-      [p.output, p.locals]
+      [p.output, p.locals, p.locals_sig]
     end
   end
 
@@ -22,12 +22,14 @@ module SorbetErb
     include AST::Processor::Mixin
 
     LOCALS_PREFIX = 'locals:'
+    LOCALS_SIG_PREFIX = 'locals_sig:'
 
-    attr_accessor :output, :locals
+    attr_accessor :output, :locals, :locals_sig
 
     def initialize
       @output = []
       @locals = nil
+      @locals_sig = nil
     end
 
     def handler_missing(node)
@@ -47,10 +49,12 @@ module SorbetErb
       when '#'
         # Ignore comments if it's not strict locals
         code_text = code_node.children.first.strip
-        return unless code_text.start_with?(LOCALS_PREFIX)
-
-        # No need to parse the locals
-        @locals = code_text.delete_prefix(LOCALS_PREFIX).strip
+        if code_text.start_with?(LOCALS_PREFIX)
+          # No need to parse the locals
+          @locals = code_text.delete_prefix(LOCALS_PREFIX).strip
+        elsif code_text.start_with?(LOCALS_SIG_PREFIX)
+          @locals_sig = code_text.delete_prefix(LOCALS_SIG_PREFIX).strip
+        end
       else
         process_all(node.children)
       end
