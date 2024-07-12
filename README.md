@@ -41,6 +41,16 @@ and use `sorbet/erb` as your output directory. Don't forget to add
 bin/sorbet_erb ./app ./sorbet/erb
 ```
 
+### Sorbet signatures (experimental)
+Running typechecking in Rails ERB templates is more helpful if there
+are concrete types for the arguments.
+
+sorbet_erb supports Sorbet-type signatures as a magic comment.
+
+```
+<%# locals_sig: sig { params(x: Integer).void } %>
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

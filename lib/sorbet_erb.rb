@@ -44,6 +44,7 @@ module SorbetErb
 
       <%= extra_body %>
 
+      <%= locals_sig %>
       def body<%= locals %>
         <% lines.each do |line| %>
           <%= line %>
@@ -78,12 +79,13 @@ module SorbetErb
       next if exclude_paths.any? { |p| p.include?(pathname.to_s) }
 
       extractor = CodeExtractor.new
-      lines, locals = extractor.extract(File.read(p))
+      lines, locals, locals_sig = extractor.extract(File.read(p))
 
       # Partials and Turbo streams must use strict locals
       next if requires_defined_locals(pathname.basename.to_s) && locals.nil? && skip_missing_locals
 
       locals ||= '()'
+      locals_sig ||= ''
 
       rel_output_dir = File.join(
         output_dir,
@@ -100,6 +102,7 @@ module SorbetErb
         result = erb.result_with_hash(
           class_suffix: SecureRandom.hex(6),
           locals: locals,
+          locals_sig: locals_sig,
           extra_includes: config.fetch('extra_includes'),
           extra_body: config.fetch('extra_body'),
           lines: lines
