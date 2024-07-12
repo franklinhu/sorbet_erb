@@ -70,16 +70,35 @@ class CodeExtractorTest < Minitest::Spec
           ' a '
         ],
         locals: '(a:, b:)'
+      },
+      {
+        name: 'locals sig',
+        input: <<~INPUT,
+          <%# locals_sig: sig { params(a: Integer, b: String).void } %>
+          <%# locals:(a:, b:) %>
+          <%= a %>
+        INPUT
+        output: [
+          ' a '
+        ],
+        locals: '(a:, b:)',
+        locals_sig: 'sig { params(a: Integer, b: String).void }'
       }
     ]
     test_cases.each do |tc|
       e = SorbetErb::CodeExtractor.new
-      actual, locals = e.extract(tc[:input])
+      actual, locals, locals_sig = e.extract(tc[:input])
       assert_equal(tc[:output], actual, tc[:name])
       if tc[:locals].nil?
         assert_nil(locals, tc[:name])
       else
         assert_equal(tc[:locals], locals, tc[:name])
+      end
+
+      if tc[:locals_sig].nil?
+        assert_nil(locals_sig, tc[:name])
+      else
+        assert_equal(tc[:locals_sig], locals_sig, tc[:name])
       end
     end
   end
