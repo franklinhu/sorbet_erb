@@ -88,10 +88,10 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
             sig { params(content: T.untyped).returns(T.untyped) }
             def with_child_content(content); end
 
-            sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(children: T::Enumerable[T.untyped]).returns(T.untyped))).returns(T::Enumerable[T.untyped]) }
             def with_children(*args, &block); end
 
-            sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(parent: T.untyped).returns(T.untyped))).returns(T.untyped) }
             def with_parent(*args, &block); end
 
             sig { params(content: T.untyped).returns(T.untyped) }
@@ -124,10 +124,10 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
             sig { returns(T::Boolean) }
             def parent?; end
 
-            sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(parent: TestComponent::ParentType).returns(T.untyped))).returns(TestComponent::ParentType) }
             def with_parent(*args, &block); end
 
-            sig { params(content: T.untyped).returns(T.untyped) }
+            sig { params(content: T.untyped).returns(TestComponent::ParentType) }
             def with_parent_content(content); end
           end
         end
@@ -159,7 +159,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
             sig { returns(T::Boolean) }
             def other_component?; end
 
-            sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(other_component: T.untyped).returns(T.untyped))).returns(T.untyped) }
             def with_other_component(*args, &block); end
 
             sig { params(content: T.untyped).returns(T.untyped) }

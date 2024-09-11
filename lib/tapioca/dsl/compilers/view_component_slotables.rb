@@ -69,9 +69,12 @@ module Tapioca
             "with_#{name}",
             parameters: [
               create_rest_param('args', type: 'T.untyped'),
-              create_block_param('block', type: 'T.untyped')
+              create_block_param(
+                'block',
+                type: "T.nilable(T.proc.params(#{name}: #{return_type}).returns(T.untyped))"
+              )
             ],
-            return_type: 'T.untyped'
+            return_type: return_type
           )
 
           if is_many
@@ -101,7 +104,7 @@ module Tapioca
               parameters: [
                 create_param('content', type: 'T.untyped')
               ],
-              return_type: 'T.untyped'
+              return_type: return_type
             )
           end
         end
