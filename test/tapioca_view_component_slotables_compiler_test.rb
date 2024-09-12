@@ -82,7 +82,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
             sig { returns(T::Boolean) }
             def parent?; end
 
-            sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(child: T.untyped).returns(T.untyped))).returns(T.untyped) }
             def with_child(*args, &block); end
 
             sig { params(content: T.untyped).returns(T.untyped) }
@@ -107,7 +107,10 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
       add_ruby_file('test_component.rb', <<~CONTENT)
         class TestComponent < ViewComponent::Base
           class ParentType < ViewComponent::Base; end
+          class ChildType < ViewComponent::Base; end
+
           renders_one :parent, ParentType
+          renders_many :children, ChildType
         end
       CONTENT
 
@@ -118,11 +121,26 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
           include ViewComponentSlotablesMethodsModule
 
           module ViewComponentSlotablesMethodsModule
+            sig { returns(T::Enumerable[TestComponent::ChildType]) }
+            def children; end
+
+            sig { returns(T::Boolean) }
+            def children?; end
+
             sig { returns(TestComponent::ParentType) }
             def parent; end
 
             sig { returns(T::Boolean) }
             def parent?; end
+
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(child: TestComponent::ChildType).returns(T.untyped))).returns(TestComponent::ChildType) }
+            def with_child(*args, &block); end
+
+            sig { params(content: T.untyped).returns(T.untyped) }
+            def with_child_content(content); end
+
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(children: T::Enumerable[TestComponent::ChildType]).returns(T.untyped))).returns(T::Enumerable[TestComponent::ChildType]) }
+            def with_children(*args, &block); end
 
             sig { params(args: T.untyped, block: T.nilable(T.proc.params(parent: TestComponent::ParentType).returns(T.untyped))).returns(TestComponent::ParentType) }
             def with_parent(*args, &block); end

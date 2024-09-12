@@ -44,12 +44,7 @@ module Tapioca
               )
 
               is_many = T.let(config[:collection], T::Boolean)
-              return_type =
-                if is_many
-                  "T::Enumerable[#{renderable}]"
-                else
-                  renderable
-                end
+              return_type = renderable
 
               module_name = 'ViewComponentSlotablesMethodsModule'
               klass.create_module(module_name) do |mod|
@@ -62,7 +57,14 @@ module Tapioca
 
         sig { params(klass: RBI::Scope, name: String, return_type: String, is_many: T::Boolean).void }
         def generate_instance_methods(klass, name, return_type, is_many)
-          klass.create_method(name, return_type: return_type)
+          return_type_maybe_plural =
+            if is_many
+              "T::Enumerable[#{return_type}]"
+            else
+              return_type
+            end
+
+          klass.create_method(name, return_type: return_type_maybe_plural)
           klass.create_method("#{name}?", return_type: 'T::Boolean')
 
           klass.create_method(
@@ -71,10 +73,10 @@ module Tapioca
               create_rest_param('args', type: 'T.untyped'),
               create_block_param(
                 'block',
-                type: "T.nilable(T.proc.params(#{name}: #{return_type}).returns(T.untyped))"
+                type: "T.nilable(T.proc.params(#{name}: #{return_type_maybe_plural}).returns(T.untyped))"
               )
             ],
-            return_type: return_type
+            return_type: return_type_maybe_plural
           )
 
           if is_many
@@ -86,9 +88,12 @@ module Tapioca
               "with_#{singular_name}",
               parameters: [
                 create_rest_param('args', type: 'T.untyped'),
-                create_block_param('block', type: 'T.untyped')
+                create_block_param(
+                  'block',
+                  type: "T.nilable(T.proc.params(#{singular_name}: #{return_type}).returns(T.untyped))"
+                )
               ],
-              return_type: 'T.untyped'
+              return_type: return_type
             )
             klass.create_method(
               "with_#{singular_name}_content",
