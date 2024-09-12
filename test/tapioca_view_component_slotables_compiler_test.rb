@@ -154,6 +154,65 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
       assert_equal(expected, rbi_for(:TestComponent))
     end
 
+    it 'generates method sigs with param types when types hash passed' do
+      add_ruby_file('test_component.rb', <<~CONTENT)
+        class TestComponent < ViewComponent::Base
+          class LinkType < ViewComponent::Base; end
+          class ButtonType < ViewComponent::Base; end
+
+          renders_one :action, types: {
+            link: LinkType,
+            button: ButtonType,
+          }
+
+          renders_one :visual, types: {
+            link: {
+              renders: LinkType,
+            },
+            button: {
+              renders: lambda { LinkType.new },
+            }
+          }
+        end
+      CONTENT
+
+      expected = <<~RBI
+        # typed: strong
+
+        class TestComponent
+          include ViewComponentSlotablesMethodsModule
+
+          module ViewComponentSlotablesMethodsModule
+            sig { returns(T.untyped) }
+            def action; end
+
+            sig { returns(T::Boolean) }
+            def action?; end
+
+            sig { returns(T.untyped) }
+            def visual; end
+
+            sig { returns(T::Boolean) }
+            def visual?; end
+
+            sig { params(args: T.untyped, block: T.untyped).returns(TestComponent::ButtonType) }
+            def with_action_button(*args, &block); end
+
+            sig { params(args: T.untyped, block: T.untyped).returns(TestComponent::LinkType) }
+            def with_action_link(*args, &block); end
+
+            sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+            def with_visual_button(*args, &block); end
+
+            sig { params(args: T.untyped, block: T.untyped).returns(TestComponent::LinkType) }
+            def with_visual_link(*args, &block); end
+          end
+        end
+      RBI
+
+      assert_equal(expected, rbi_for(:TestComponent))
+    end
+
     it 'generates method sigs with param types when type is a proc' do
       add_ruby_file('test_component.rb', <<~CONTENT)
         class TestComponent < ViewComponent::Base

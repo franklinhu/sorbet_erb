@@ -30,28 +30,59 @@ module Tapioca
         def decorate
           root.create_path(constant) do |klass|
             T.unsafe(constant).registered_slots.each do |name, config|
-              renderable_type = config[:renderable]
-              renderable = T.let(
-                case renderable_type
-                when String
-                  renderable_type
-                when Class
-                  T.must(renderable_type.name)
-                else
-                  'T.untyped'
-                end,
-                String
-              )
-
               is_many = T.let(config[:collection], T::Boolean)
-              return_type = renderable
 
               module_name = 'ViewComponentSlotablesMethodsModule'
               klass.create_module(module_name) do |mod|
-                generate_instance_methods(mod, name.to_s, return_type, is_many)
+                if config[:renderable_hash]
+                  generate_polymorphic_instance_methods(mod, name.to_s, config[:renderable_hash], false)
+                else
+                  return_type = renderable_to_type_name(config[:renderable])
+
+                  generate_instance_methods(mod, name.to_s, return_type, is_many)
+                end
               end
               klass.create_include(module_name)
             end
+          end
+        end
+
+        sig { params(r: T.untyped).returns(String) }
+        def renderable_to_type_name(r)
+          case r
+          when String
+            r
+          when Class
+            T.must(r.name)
+          else
+            'T.untyped'
+          end
+        end
+
+        sig do
+          params(
+            klass: RBI::Scope,
+            slot_name: String,
+            underlying_types: T::Hash[Symbol, T.untyped],
+            is_many: T::Boolean
+          ).void
+        end
+        def generate_polymorphic_instance_methods(klass, slot_name, underlying_types, is_many)
+          klass.create_method(slot_name, return_type: 'T.untyped') # TODO: should this be T.any of underlying types?
+          klass.create_method("#{slot_name}?", return_type: 'T::Boolean')
+
+          underlying_types.each do |name, config|
+            namespaced_name = "#{slot_name}_#{name}"
+            return_type = renderable_to_type_name(config[:renderable])
+
+            klass.create_method(
+              "with_#{namespaced_name}",
+              parameters: [
+                create_rest_param('args', type: 'T.untyped'),
+                create_block_param('block', type: 'T.untyped')
+              ],
+              return_type: return_type
+            )
           end
         end
 
