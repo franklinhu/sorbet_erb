@@ -165,7 +165,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
             button: ButtonType,
           }
 
-          renders_one :visual, types: {
+          renders_many :visuals, types: {
             link: {
               renders: LinkType,
             },
@@ -190,10 +190,10 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
             def action?; end
 
             sig { returns(T.untyped) }
-            def visual; end
+            def visuals; end
 
             sig { returns(T::Boolean) }
-            def visual?; end
+            def visuals?; end
 
             sig { params(args: T.untyped, block: T.untyped).returns(TestComponent::ButtonType) }
             def with_action_button(*args, &block); end

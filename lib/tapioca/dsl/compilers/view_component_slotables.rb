@@ -35,7 +35,7 @@ module Tapioca
               module_name = 'ViewComponentSlotablesMethodsModule'
               klass.create_module(module_name) do |mod|
                 if config[:renderable_hash]
-                  generate_polymorphic_instance_methods(mod, name.to_s, config[:renderable_hash], false)
+                  generate_polymorphic_instance_methods(mod, name.to_s, config[:renderable_hash], is_many)
                 else
                   return_type = renderable_to_type_name(config[:renderable])
 
@@ -68,11 +68,19 @@ module Tapioca
           ).void
         end
         def generate_polymorphic_instance_methods(klass, slot_name, underlying_types, is_many)
+          # We want to signularize the slot name since it's used as the namespace
+          singular_slot_name =
+            if is_many
+              ActiveSupport::Inflector.singularize(slot_name)
+            else
+              slot_name
+            end
+
           klass.create_method(slot_name, return_type: 'T.untyped') # TODO: should this be T.any of underlying types?
           klass.create_method("#{slot_name}?", return_type: 'T::Boolean')
 
           underlying_types.each do |name, config|
-            namespaced_name = "#{slot_name}_#{name}"
+            namespaced_name = "#{singular_slot_name}_#{name}"
             return_type = renderable_to_type_name(config[:renderable])
 
             klass.create_method(
