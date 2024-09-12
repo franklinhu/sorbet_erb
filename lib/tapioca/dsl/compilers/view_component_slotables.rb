@@ -47,13 +47,13 @@ module Tapioca
           end
         end
 
-        sig { params(r: T.untyped).returns(String) }
-        def renderable_to_type_name(r)
-          case r
+        sig { params(input: T.untyped).returns(String) }
+        def renderable_to_type_name(input)
+          case input
           when String
-            r
+            input
           when Class
-            T.must(r.name)
+            T.must(input.name)
           else
             'T.untyped'
           end
