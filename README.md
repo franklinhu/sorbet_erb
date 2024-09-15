@@ -21,7 +21,7 @@ This gem isn't published to RubyGems yet, so you need to depend
 directly on the git repository:
 
 ```
-gem 'sorbet_enum', git: 'https://github.com/franklinhu/sorbet_enum'
+gem 'sorbet_erb', git: 'https://github.com/franklinhu/sorbet_erb'
 ```
 
 After installing the gem, run `bundle binstubs sorbet_erb` to install
