@@ -1,0 +1,22 @@
+name: Publish sorbet_erb to Rubygems
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: ruby
+      - uses: rubygems/release-gem@v1
+
