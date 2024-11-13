@@ -1,7 +1,10 @@
 AllCops:
-  TargetRubyVersion: 3.0.0
+  TargetRubyVersion: 3.1.0
 
 Style/Documentation:
+  Enabled: false
+
+Style/HashSyntax:
   Enabled: false
 
 Style/StringLiterals:
