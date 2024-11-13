@@ -4,6 +4,9 @@ AllCops:
 Style/Documentation:
   Enabled: false
 
+Style/HashSyntax:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: single_quotes
