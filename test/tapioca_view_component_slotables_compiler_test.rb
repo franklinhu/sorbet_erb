@@ -70,7 +70,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
           include ViewComponentSlotablesMethodsModule
 
           module ViewComponentSlotablesMethodsModule
-            sig { returns(T::Enumerable[T.untyped]) }
+            sig { returns(T::Array[T.untyped]) }
             def children; end
 
             sig { returns(T::Boolean) }
@@ -88,7 +88,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
             sig { params(content: T.untyped).returns(T.untyped) }
             def with_child_content(content); end
 
-            sig { params(args: T.untyped, block: T.nilable(T.proc.params(children: T::Enumerable[T.untyped]).returns(T.untyped))).returns(T::Enumerable[T.untyped]) }
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(children: T::Array[T.untyped]).returns(T.untyped))).returns(T::Array[T.untyped]) }
             def with_children(*args, &block); end
 
             sig { params(args: T.untyped, block: T.nilable(T.proc.params(parent: T.untyped).returns(T.untyped))).returns(T.untyped) }
@@ -121,7 +121,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
           include ViewComponentSlotablesMethodsModule
 
           module ViewComponentSlotablesMethodsModule
-            sig { returns(T::Enumerable[TestComponent::ChildType]) }
+            sig { returns(T::Array[TestComponent::ChildType]) }
             def children; end
 
             sig { returns(T::Boolean) }
@@ -139,7 +139,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
             sig { params(content: T.untyped).returns(T.untyped) }
             def with_child_content(content); end
 
-            sig { params(args: T.untyped, block: T.nilable(T.proc.params(children: T::Enumerable[TestComponent::ChildType]).returns(T.untyped))).returns(T::Enumerable[TestComponent::ChildType]) }
+            sig { params(args: T.untyped, block: T.nilable(T.proc.params(children: T::Array[TestComponent::ChildType]).returns(T.untyped))).returns(T::Array[TestComponent::ChildType]) }
             def with_children(*args, &block); end
 
             sig { params(args: T.untyped, block: T.nilable(T.proc.params(parent: TestComponent::ParentType).returns(T.untyped))).returns(TestComponent::ParentType) }

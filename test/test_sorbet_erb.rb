@@ -12,17 +12,17 @@ class TestSorbetErb < Minitest::Test
       {
         name: 'no directory',
         path: Pathname.new('app/components/my_component.html.erb'),
-        expected: 'MyComponent'
+        expected: ['MyComponent', false]
       },
       {
         name: 'component with component directory',
         path: Pathname.new('app/components/my_component/my_component.html.erb'),
-        expected: 'MyComponent'
+        expected: ['MyComponent', false]
       },
       {
         name: 'namespaced directory',
         path: Pathname.new('app/components/namespace/my_component.html.erb'),
-        expected: 'Namespace::MyComponent'
+        expected: ['Namespace::MyComponent', false]
       }
     ]
     test_cases.each do |tc|
