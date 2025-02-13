@@ -98,7 +98,7 @@ module Tapioca
         def generate_instance_methods(klass, name, return_type, is_many)
           return_type_maybe_plural =
             if is_many
-              "T::Enumerable[#{return_type}]"
+              "T::Array[#{return_type}]"
             else
               return_type
             end
