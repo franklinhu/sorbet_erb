@@ -28,7 +28,7 @@ module SorbetErb
 
   ERB_TEMPLATE = <<~ERB_TEMPLATE
     # typed: true
-    class SorbetErb<%= class_suffix %> < ApplicationController
+    class <%= class_name %><%= extend_app_controller ? " < ApplicationController" : "" %>
       extend T::Sig
       include ActionView::Helpers
       include ApplicationController::HelperMethods
@@ -87,6 +87,8 @@ module SorbetErb
       locals ||= '()'
       locals_sig ||= ''
 
+      class_name, extend_app_controller = class_name_from_path(pathname)
+
       rel_output_dir = File.join(
         output_dir,
         pathname.dirname.relative_path_from(d)
@@ -100,7 +102,8 @@ module SorbetErb
       erb = ERB.new(ERB_TEMPLATE)
       File.open(output_path, 'w') do |f|
         result = erb.result_with_hash(
-          class_suffix: SecureRandom.hex(6),
+          class_name: class_name,
+          extend_app_controller: extend_app_controller,
           locals: locals,
           locals_sig: locals_sig,
           extra_includes: config.fetch('extra_includes'),
@@ -125,6 +128,40 @@ module SorbetErb
 
   def self.requires_defined_locals(file_name)
     file_name.start_with?('_') || file_name.end_with?('.turbo_stream.erb')
+  end
+
+  def self.class_name_from_path(pathname)
+    # ViewComponents are stored under app/components, and the partials need access to the instance
+    # methods and variables available on the component class, so set the class name to the component
+    # class name.
+    # TODO: support namespacing
+    if pathname.to_s.start_with?('app/components')
+      return [
+        extract_class_name(pathname).map do |part|
+          ActiveSupport::Inflector.camelize(part)
+        end.join('::'),
+        false
+      ]
+    end
+
+    # Otherwise make a random class so this doesn't collide with any existing code
+    ["SorbetErb#{SecureRandom.hex(6)}", true]
+  end
+
+  def self.extract_class_name(pathname)
+    return [] if pathname.to_s == 'app/components' || pathname.to_s == '.'
+
+    # Strip template suffix
+    basename = File.basename(pathname.basename, '.html.erb')
+
+    # We need to handle the cases where the dirname matches the component name, or if there's
+    # a namespace
+    # `app/components/my_component/my_component.html.erb`
+    # `app/components/namespace/my_component/my_component.html.erb`
+    dirname = pathname.dirname
+    dirname = dirname.dirname if basename.to_s == dirname.basename.to_s
+
+    extract_class_name(dirname) + [basename]
   end
 
   def self.start(argv)
