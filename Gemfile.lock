@@ -4,7 +4,7 @@ PATH
     sorbet_erb (0.4.0)
       better_html (~> 2.1.1)
       psych
-      tapioca (~> 0.16.1)
+      tapioca (~> 0.16.11)
 
 GEM
   remote: https://rubygems.org/
@@ -149,7 +149,7 @@ GEM
     parser (3.3.0.5)
       ast (~> 2.4.1)
       racc
-    prism (0.24.0)
+    prism (1.4.0)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -199,9 +199,12 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.1.0)
-    rbi (0.1.14)
-      prism (>= 0.18.0, < 1.0.0)
+    rbi (0.3.3)
+      prism (~> 1.0)
+      rbs (>= 3.4.4)
       sorbet-runtime (>= 0.5.9204)
+    rbs (3.9.4)
+      logger
     rdoc (6.6.3.1)
       psych (>= 4.0.0)
     regexp_parser (2.9.0)
@@ -238,11 +241,12 @@ GEM
       sorbet-static-and-runtime (>= 0.5.10187)
       thor (>= 0.19.2)
     stringio (3.1.0)
-    tapioca (0.16.1)
+    tapioca (0.16.11)
+      benchmark
       bundler (>= 2.2.25)
       netrc (>= 0.11.0)
       parallel (>= 1.21.0)
-      rbi (>= 0.1.14, < 0.2)
+      rbi (~> 0.2)
       sorbet-static-and-runtime (>= 0.5.11087)
       spoom (>= 1.2.0)
       thor (>= 1.2.0)
