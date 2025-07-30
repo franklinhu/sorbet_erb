@@ -17,15 +17,10 @@ if you're interested in using this in other contexts.
 
 ## Installation
 
-This gem isn't published to RubyGems yet, so you need to depend
-directly on the git repository:
-
 ```
-gem 'sorbet_erb', git: 'https://github.com/franklinhu/sorbet_erb'
+bundle add sorbet_erb
+bundle binstub sorbet_erb  # Adds bin/sorbet_erb
 ```
-
-After installing the gem, run `bundle binstubs sorbet_erb` to install
-a helper script under `bin/sorbet_erb`.
 
 ## Usage
 
@@ -50,6 +45,11 @@ sorbet_erb supports Sorbet-type signatures as a magic comment.
 ```
 <%# locals_sig: sig { params(x: Integer).void } %>
 ```
+
+## Configuration
+
+See the [example configuration file](examples/config.yml)
+
 
 ## Development
 
