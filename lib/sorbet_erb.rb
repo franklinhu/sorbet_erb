@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 require 'erb'
@@ -149,7 +150,7 @@ module SorbetErb
   end
 
   def self.extract_class_name(pathname)
-    return [] if pathname.to_s == 'app/components' || pathname.to_s == '.'
+    return [] if ['app/components', '.'].include?(pathname.to_s)
 
     # Strip template suffix
     basename = File.basename(pathname.basename, '.html.erb')
