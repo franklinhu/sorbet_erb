@@ -11,5 +11,3 @@ module ActiveModel::Error; end
 module ActiveRecord::ConnectionAdapters::DatabaseStatements; end
 module ActiveRecord::ConnectionAdapters::SchemaStatements; end
 module GlobalID::Identification::SignedGlobalID; end
-module Minitest::Spec; end
-module Tapioca::Helpers::Test::DslCompiler; end
