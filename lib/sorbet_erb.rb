@@ -15,14 +15,14 @@ module SorbetErb
 
   CONFIG_FILE_NAME = '.sorbet_erb.yml'
 
-  DEFAULT_CONFIG = T.let({
-    'input_dirs' => ['app'],
-    'exclude_paths' => [],
-    'output_dir' => 'sorbet/erb',
-    'extra_includes' => [],
-    'extra_body' => '',
-    'skip_missing_locals' => true
-  }.freeze, T::Hash[String, T.untyped])
+  class Config < T::Struct
+    const :input_dirs, T::Array[String], default: ['app']
+    const :exclude_paths, T::Array[String], default: []
+    const :output_dir, String, default: 'sorbet/erb'
+    const :extra_includes, T::Array[String], default: []
+    const :extra_body, String, default: ''
+    const :skip_missing_locals, T::Boolean, default: true
+  end
 
   USAGE = <<~USAGE
     Usage: sorbet_erb input_dir output_dir
@@ -69,11 +69,11 @@ module SorbetErb
       if input_dir
         [input_dir]
       else
-        config.fetch('input_dirs')
+        config.input_dirs
       end
-    exclude_paths = config.fetch('exclude_paths')
-    output_dir ||= config.fetch('output_dir')
-    skip_missing_locals = config.fetch('skip_missing_locals')
+    exclude_paths = config.exclude_paths
+    output_dir ||= config.output_dir
+    skip_missing_locals = config.skip_missing_locals
 
     puts 'Clearing output directory'
     FileUtils.rm_rf(output_dir)
@@ -116,8 +116,8 @@ module SorbetErb
           extend_app_controller: extend_app_controller,
           locals: locals,
           locals_sig: locals_sig,
-          extra_includes: config.fetch('extra_includes'),
-          extra_body: config.fetch('extra_body'),
+          extra_includes: config.extra_includes,
+          extra_body: config.extra_body,
           lines: lines
         )
         f.write(result)
@@ -125,7 +125,7 @@ module SorbetErb
     end
   end
 
-  sig { returns(T::Hash[String, T.untyped]) }
+  sig { returns(Config) }
   def self.read_config
     path = File.join(Dir.pwd, CONFIG_FILE_NAME)
     config =
@@ -134,7 +134,7 @@ module SorbetErb
       else
         {}
       end
-    DEFAULT_CONFIG.merge(config)
+    Config.from_hash(config)
   end
 
   sig { params(file_name: String).returns(T::Boolean) }
