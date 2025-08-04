@@ -1,24 +1,28 @@
+# typed: strict
 # frozen_string_literal: true
 
 require 'erb'
 require 'fileutils'
 require 'pathname'
 require 'psych'
+require 'sorbet-runtime'
 
 require_relative 'sorbet_erb/code_extractor'
 require_relative 'sorbet_erb/version'
 
 module SorbetErb
+  extend T::Sig
+
   CONFIG_FILE_NAME = '.sorbet_erb.yml'
 
-  DEFAULT_CONFIG = {
+  DEFAULT_CONFIG = T.let({
     'input_dirs' => ['app'],
     'exclude_paths' => [],
     'output_dir' => 'sorbet/erb',
     'extra_includes' => [],
     'extra_body' => '',
     'skip_missing_locals' => true
-  }.freeze
+  }.freeze, T::Hash[String, T.untyped])
 
   USAGE = <<~USAGE
     Usage: sorbet_erb input_dir output_dir
@@ -53,6 +57,12 @@ module SorbetErb
     end
   ERB_TEMPLATE
 
+  sig do
+    params(
+      input_dir: T.nilable(String),
+      output_dir: T.nilable(String)
+    ).void
+  end
   def self.extract_rb_from_erb(input_dir, output_dir)
     config = read_config
     input_dirs =
@@ -82,7 +92,7 @@ module SorbetErb
       lines, locals, locals_sig = extractor.extract(File.read(p))
 
       # Partials and Turbo streams must use strict locals
-      next if requires_defined_locals(pathname.basename.to_s) && locals.nil? && skip_missing_locals
+      next if requires_defined_locals?(pathname.basename.to_s) && locals.nil? && skip_missing_locals
 
       locals ||= '()'
       locals_sig ||= ''
@@ -115,6 +125,7 @@ module SorbetErb
     end
   end
 
+  sig { returns(T::Hash[String, T.untyped]) }
   def self.read_config
     path = File.join(Dir.pwd, CONFIG_FILE_NAME)
     config =
@@ -126,10 +137,12 @@ module SorbetErb
     DEFAULT_CONFIG.merge(config)
   end
 
-  def self.requires_defined_locals(file_name)
+  sig { params(file_name: String).returns(T::Boolean) }
+  def self.requires_defined_locals?(file_name)
     file_name.start_with?('_') || file_name.end_with?('.turbo_stream.erb')
   end
 
+  sig { params(pathname: Pathname).returns([String, T::Boolean]) }
   def self.class_name_from_path(pathname)
     # ViewComponents are stored under app/components, and the partials need access to the instance
     # methods and variables available on the component class, so set the class name to the component
@@ -148,8 +161,9 @@ module SorbetErb
     ["SorbetErb#{SecureRandom.hex(6)}", true]
   end
 
+  sig { params(pathname: Pathname).returns(T::Array[String]) }
   def self.extract_class_name(pathname)
-    return [] if pathname.to_s == 'app/components' || pathname.to_s == '.'
+    return [] if ['app/components', '.'].include?(pathname.to_s)
 
     # Strip template suffix
     basename = File.basename(pathname.basename, '.html.erb')
@@ -164,6 +178,7 @@ module SorbetErb
     extract_class_name(dirname) + [basename]
   end
 
+  sig { params(argv: T::Array[String]).void }
   def self.start(argv)
     input = argv[0]
     output = argv[1]

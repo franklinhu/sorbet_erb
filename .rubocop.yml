@@ -1,5 +1,13 @@
+plugins:
+  - rubocop-sorbet
+
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 3.2.0
+
+Sorbet/HasSigil:
+  Enabled: true
+  MinimumStrictness: true
 
 Style/Documentation:
   Enabled: false
