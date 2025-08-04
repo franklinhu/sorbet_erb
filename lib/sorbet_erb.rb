@@ -92,7 +92,7 @@ module SorbetErb
       lines, locals, locals_sig = extractor.extract(File.read(p))
 
       # Partials and Turbo streams must use strict locals
-      next if requires_defined_locals(pathname.basename.to_s) && locals.nil? && skip_missing_locals
+      next if requires_defined_locals?(pathname.basename.to_s) && locals.nil? && skip_missing_locals
 
       locals ||= '()'
       locals_sig ||= ''
@@ -138,7 +138,7 @@ module SorbetErb
   end
 
   sig { params(file_name: String).returns(T::Boolean) }
-  def self.requires_defined_locals(file_name)
+  def self.requires_defined_locals?(file_name)
     file_name.start_with?('_') || file_name.end_with?('.turbo_stream.erb')
   end
 

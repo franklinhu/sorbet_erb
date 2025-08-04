@@ -23,8 +23,7 @@ class TapiocaViewComponentSlotablesCompilerTest < Minitest::Spec
 
   describe 'gather_constants' do
     it 'gathers no constants if there are no ViewComponent classes' do
-      add_ruby_file('test_component.rb', <<~CONTENT)
-      CONTENT
+      add_ruby_file('test_component.rb', '')
       assert_empty(Tapioca::Dsl::Compilers::ViewComponentSlotables.gather_constants)
     end
 

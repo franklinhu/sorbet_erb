@@ -9,9 +9,6 @@ module SorbetErb
   class CodeExtractor
     extend T::Sig
 
-    sig { void }
-    def initialize; end
-
     sig { params(input: String).returns([T::Array[String], T.nilable(String), T.nilable(String)]) }
     def extract(input)
       buffer = Parser::Source::Buffer.new('(buffer)')
