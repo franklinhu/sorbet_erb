@@ -1,13 +1,18 @@
-# typed: true
+# typed: strict
 # frozen_string_literal: true
 
 require 'better_html'
 require 'better_html/parser'
+require 'sorbet-runtime'
 
 module SorbetErb
   class CodeExtractor
+    extend T::Sig
+
+    sig { void }
     def initialize; end
 
+    sig { params(input: String).returns([T::Array[String], T.nilable(String), T.nilable(String)]) }
     def extract(input)
       buffer = Parser::Source::Buffer.new('(buffer)')
       buffer.source = input
@@ -20,25 +25,36 @@ module SorbetErb
   end
 
   class CodeProcessor
+    extend T::Sig
     include AST::Processor::Mixin
 
     LOCALS_PREFIX = 'locals:'
     LOCALS_SIG_PREFIX = 'locals_sig:'
 
-    attr_accessor :output, :locals, :locals_sig
+    sig { returns(T::Array[String]) }
+    attr_accessor :output
 
+    sig { returns(T.nilable(String)) }
+    attr_accessor :locals
+
+    sig { returns(T.nilable(String)) }
+    attr_accessor :locals_sig
+
+    sig { void }
     def initialize
-      @output = []
-      @locals = nil
-      @locals_sig = nil
+      @output = T.let([], T::Array[String])
+      @locals = T.let(nil, T.nilable(String))
+      @locals_sig = T.let(nil, T.nilable(String))
     end
 
+    sig { params(node: AST::Node).void }
     def handler_missing(node)
       # Some children may be strings, so only look for AST nodes
       children = node.children.select { |c| c.is_a?(BetterHtml::AST::Node) }
       process_all(children)
     end
 
+    sig { params(node: AST::Node).void }
     def on_erb(node)
       indicator_node = node.children.compact.find { |c| c.type == :indicator }
       code_node = node.children.compact.find { |c| c.type == :code }
@@ -61,6 +77,7 @@ module SorbetErb
       end
     end
 
+    sig { params(node: AST::Node).void }
     def on_code(node)
       @output += node.children
     end
