@@ -14,6 +14,8 @@ if you're interested in using this in other contexts.
 - Rails partials (files beginning with `_`) and Turbo streams must use
   strict locals. sorbet_erb will skip them if there are no strict locals
   defined unless you set `skip_missing_locals`.
+- ViewComponents are nominally supported, but there isn't a great way to
+  typecheck usages of instance variables from the corresponding Ruby class.
 
 ## Installation
 
@@ -36,6 +38,10 @@ and use `sorbet/erb` as your output directory. Don't forget to add
 bin/sorbet_erb ./app ./sorbet/erb
 ```
 
+### Configuration
+
+See the [example configuration file](examples/config.yml)
+
 ### Sorbet signatures (experimental)
 Running typechecking in Rails ERB templates is more helpful if there
 are concrete types for the arguments.
@@ -45,11 +51,6 @@ sorbet_erb supports Sorbet-type signatures as a magic comment.
 ```
 <%# locals_sig: sig { params(x: Integer).void } %>
 ```
-
-## Configuration
-
-See the [example configuration file](examples/config.yml)
-
 
 ## Development
 
