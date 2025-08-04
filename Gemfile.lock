@@ -287,7 +287,6 @@ DEPENDENCIES
   rails (~> 7.1.3)
   rake (~> 13.0)
   rubocop (~> 1.21)
-  sorbet-static-and-runtime (~> 0.5.11340)
   sorbet_erb!
   view_component (~> 3.12.1)
 
