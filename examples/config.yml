@@ -1,0 +1,28 @@
+# This is an example configuration for .sorbet_erb.yml
+
+# `input_dirs` controls which directories the tool reads source `.erb` files.
+input_dirs:
+  - 'app'
+
+# `exclude_paths` can be used to exclude certain path prefixes from `input_dirs`
+exclude_paths:
+  - 'app/components'
+
+# `output_dir` is the directory generated RBI files will be written to
+output_dir: 'sorbet/erb'
+
+# `extra_includes` are Ruby constants that will be included into the generated
+# RBI. This is necessary since sorbet_erb does not walk the dependency graph, so
+# some gems that are available to views are not automatically included.
+extra_includes:
+  - 'SimpleForm::ActionViewExtensions::FormHelper'
+
+# `extra_body` is Ruby code that will be templated into the RBI files
+extra_body: |
+  def extra_method
+    puts 1
+  end
+
+# `skip_missing_locals` skips generating RBI for files that require strict locals:
+# partials and Turbo templates.
+skip_missing_locals: true
