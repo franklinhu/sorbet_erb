@@ -299,4 +299,4 @@ DEPENDENCIES
   view_component (~> 3.12.1)
 
 BUNDLED WITH
-   2.5.23
+   4.0.6
