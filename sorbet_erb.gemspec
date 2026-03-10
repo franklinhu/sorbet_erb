@@ -7,6 +7,7 @@ Gem::Specification.new do |spec|
   spec.version = SorbetErb::VERSION
   spec.authors = ['Franklin Hu']
   spec.email = ['franklin@thisisfranklin.com']
+  spec.licenses = ['MIT']
 
   spec.summary = 'Extracts Ruby code from ERB files for Sorbet'
   spec.description = 'Extracts Ruby code from ERB files so you can run Sorbet over them'
