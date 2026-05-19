@@ -47,7 +47,7 @@ module SorbetErb
     sig { params(node: AST::Node).void }
     def handler_missing(node)
       # Some children may be strings, so only look for AST nodes
-      children = node.children.select { |c| c.is_a?(BetterHtml::AST::Node) }
+      children = node.children.grep(BetterHtml::AST::Node)
       process_all(children)
     end
 

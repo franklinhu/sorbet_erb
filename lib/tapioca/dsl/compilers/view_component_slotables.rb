@@ -13,6 +13,7 @@ module Tapioca
       # See https://github.com/ViewComponent/view_component/blob/main/lib/view_component/slotable.rb
       class ViewComponentSlotables < Tapioca::Dsl::Compiler
         extend T::Sig
+        extend T::Generic
 
         ConstantType = type_member { { fixed: T.class_of(::ViewComponent::Slotable) } }
 
