@@ -20,9 +20,9 @@ class TestSorbetErb < Minitest::Test
         File.write(
           '.sorbet_erb.yml',
           YAML.dump({ 
-            input_dirs: ["app"], 
-            output_dir: "out",
-            exclude_paths: ["app/views/excluded"],
+            'input_dirs' => ['app'], 
+            'output_dir' => 'out',
+            'exclude_paths' => ['app/views/excluded'],
           }),
         )
 
