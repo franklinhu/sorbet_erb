@@ -19,11 +19,13 @@ class TestSorbetErb < Minitest::Test
         File.write('app/views/excluded/show.html.erb', '<div></div>')
         File.write(
           '.sorbet_erb.yml',
-          YAML.dump({ 
-            'input_dirs' => ['app'], 
-            'output_dir' => 'out',
-            'exclude_paths' => ['app/views/excluded'],
-          }),
+          YAML.dump(
+            {
+              'input_dirs' => ['app'],
+              'output_dir' => 'out',
+              'exclude_paths' => ['app/views/excluded']
+            }
+          )
         )
 
         SorbetErb.extract_rb_from_erb(nil, nil)
@@ -43,7 +45,15 @@ class TestSorbetErb < Minitest::Test
         FileUtils.mkdir_p('app/views/b')
         File.write('app/views/a/show.html.erb', '<div></div>')
         File.write('app/views/b/show.html.erb', '<div></div>')
-        File.write('.sorbet_erb.yml', "input_dirs:\n  - app\noutput_dir: out\n")
+        File.write(
+          '.sorbet_erb.yml',
+          YAML.dump(
+            {
+              'input_dirs' => ['app'],
+              'output_dir' => 'out'
+            }
+          )
+        )
 
         SorbetErb.extract_rb_from_erb(nil, nil)
 
