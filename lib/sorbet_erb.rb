@@ -86,7 +86,7 @@ module SorbetErb
     input_dir_to_paths.each do |d, p|
       pathname = Pathname.new(p)
 
-      next if exclude_paths.any? { |p| p.include?(pathname.to_s) }
+      next if exclude_paths.any? { |excluded| pathname.to_s.include?(excluded) }
 
       extractor = CodeExtractor.new
       lines, locals, locals_sig = extractor.extract(File.read(p))
