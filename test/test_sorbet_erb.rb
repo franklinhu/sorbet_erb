@@ -2,10 +2,51 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+require 'tmpdir'
+require 'fileutils'
 
 class TestSorbetErb < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::SorbetErb::VERSION
+  end
+
+  def test_exclude_paths_skips_matching_files
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        FileUtils.mkdir_p('app/views/included')
+        FileUtils.mkdir_p('app/views/excluded')
+        File.write('app/views/included/show.html.erb', '<div></div>')
+        File.write('app/views/excluded/show.html.erb', '<div></div>')
+        File.write(
+          '.sorbet_erb.yml',
+          "input_dirs:\n  - app\noutput_dir: out\nexclude_paths:\n  - app/views/excluded\n"
+        )
+
+        SorbetErb.extract_rb_from_erb(nil, nil)
+
+        assert File.exist?('out/views/included/show.html.erb.generated.rb'),
+               'expected included file to be generated'
+        refute File.exist?('out/views/excluded/show.html.erb.generated.rb'),
+               'expected excluded file to be skipped'
+      end
+    end
+  end
+
+  def test_exclude_paths_empty_includes_everything
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        FileUtils.mkdir_p('app/views/a')
+        FileUtils.mkdir_p('app/views/b')
+        File.write('app/views/a/show.html.erb', '<div></div>')
+        File.write('app/views/b/show.html.erb', '<div></div>')
+        File.write('.sorbet_erb.yml', "input_dirs:\n  - app\noutput_dir: out\n")
+
+        SorbetErb.extract_rb_from_erb(nil, nil)
+
+        assert File.exist?('out/views/a/show.html.erb.generated.rb')
+        assert File.exist?('out/views/b/show.html.erb.generated.rb')
+      end
+    end
   end
 
   def test_extract_class_name
