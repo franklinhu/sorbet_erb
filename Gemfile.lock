@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     sorbet_erb (0.6.0.pre.unreleased)
-      better_html (~> 2.1.1)
+      better_html (>= 2.1.1)
       psych
       tapioca (>= 0.17)
 
