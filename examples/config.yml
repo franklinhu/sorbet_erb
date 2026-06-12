@@ -11,6 +11,10 @@ exclude_paths:
 # `output_dir` is the directory generated RBI files will be written to
 output_dir: 'sorbet/erb'
 
+# `app_controller_class` configures the base Rails controller class.
+# Defaults to ApplicationController
+app_controller_class: 'ApplicationController'
+
 # `extra_includes` are Ruby constants that will be included into the generated
 # RBI. This is necessary since sorbet_erb does not walk the dependency graph, so
 # some gems that are available to views are not automatically included.

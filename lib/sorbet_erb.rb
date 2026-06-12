@@ -19,6 +19,7 @@ module SorbetErb
     const :input_dirs, T::Array[String], default: ['app']
     const :exclude_paths, T::Array[String], default: []
     const :output_dir, String, default: 'sorbet/erb'
+    const :app_controller_class, String, default: 'ApplicationController'
     const :extra_includes, T::Array[String], default: []
     const :extra_body, String, default: ''
     const :skip_missing_locals, T::Boolean, default: true
@@ -32,7 +33,7 @@ module SorbetErb
 
   ERB_TEMPLATE = <<~ERB_TEMPLATE
     # typed: true
-    class <%= class_name %><%= extend_app_controller ? " < ApplicationController" : "" %>
+    class <%= class_name %><%= class_decl_suffix %>
       extend T::Sig
       include ActionView::Helpers
       include ApplicationController::HelperMethods
@@ -113,7 +114,7 @@ module SorbetErb
       File.open(output_path, 'w') do |f|
         result = erb.result_with_hash(
           class_name: class_name,
-          extend_app_controller: extend_app_controller,
+          class_decl_suffix: extend_app_controller ? " < #{config.app_controller_class}" : '',
           locals: locals,
           locals_sig: locals_sig,
           extra_includes: config.extra_includes,

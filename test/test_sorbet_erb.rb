@@ -63,6 +63,30 @@ class TestSorbetErb < Minitest::Test
     end
   end
 
+  def test_app_controller_class_override
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        FileUtils.mkdir_p('app/views/a')
+        File.write('app/views/a/show.html.erb', '<div></div>')
+        File.write(
+          '.sorbet_erb.yml',
+          YAML.dump(
+            {
+              'input_dirs' => ['app'],
+              'output_dir' => 'out',
+              'app_controller_class' => 'MyAppController'
+            }
+          )
+        )
+
+        SorbetErb.extract_rb_from_erb(nil, nil)
+
+        assert File.exist?('out/views/a/show.html.erb.generated.rb')
+        assert File.read('out/views/a/show.html.erb.generated.rb').include?('MyAppController')
+      end
+    end
+  end
+
   def test_extract_class_name
     test_cases = [
       {
