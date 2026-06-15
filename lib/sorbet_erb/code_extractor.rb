@@ -9,7 +9,11 @@ module SorbetErb
   class CodeExtractor
     extend T::Sig
 
-    sig { params(input: String).returns([T::Array[String], T.nilable(String), T.nilable(String)]) }
+    sig do
+      params(input: String).returns(
+        [T::Array[String], T.nilable(String), T.nilable(String), T.nilable(String)]
+      )
+    end
     def extract(input)
       buffer = Parser::Source::Buffer.new('(buffer)')
       buffer.source = input
@@ -17,7 +21,7 @@ module SorbetErb
 
       p = CodeProcessor.new
       p.process(parser.ast)
-      [p.output, p.locals, p.locals_sig]
+      [p.output, p.locals, p.locals_sig, p.controller_class]
     end
   end
 
@@ -27,6 +31,7 @@ module SorbetErb
 
     LOCALS_PREFIX = 'locals:'
     LOCALS_SIG_PREFIX = 'locals_sig:'
+    CONTROLLER_CLASS_PREFIX = 'controller_class:'
 
     sig { returns(T::Array[String]) }
     attr_accessor :output
@@ -37,11 +42,15 @@ module SorbetErb
     sig { returns(T.nilable(String)) }
     attr_accessor :locals_sig
 
+    sig { returns(T.nilable(String)) }
+    attr_accessor :controller_class
+
     sig { void }
     def initialize
       @output = T.let([], T::Array[String])
       @locals = T.let(nil, T.nilable(String))
       @locals_sig = T.let(nil, T.nilable(String))
+      @controller_class = T.let(nil, T.nilable(String))
     end
 
     sig { params(node: AST::Node).void }
@@ -61,13 +70,15 @@ module SorbetErb
       indicator = indicator_node.children.first
       case indicator
       when '#'
-        # Ignore comments if it's not strict locals
+        # Ignore comments unless they declare a recognized annotation.
         code_text = code_node.children.first.strip
         if code_text.start_with?(LOCALS_PREFIX)
           # No need to parse the locals
           @locals = code_text.delete_prefix(LOCALS_PREFIX).strip
         elsif code_text.start_with?(LOCALS_SIG_PREFIX)
           @locals_sig = code_text.delete_prefix(LOCALS_SIG_PREFIX).strip
+        elsif code_text.start_with?(CONTROLLER_CLASS_PREFIX)
+          @controller_class = code_text.delete_prefix(CONTROLLER_CLASS_PREFIX).strip
         end
       else
         process_all(node.children)

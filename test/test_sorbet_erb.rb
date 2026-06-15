@@ -63,6 +63,46 @@ class TestSorbetErb < Minitest::Test
     end
   end
 
+  def test_controller_class_annotation_overrides_default_parent
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        FileUtils.mkdir_p('app/views/employees')
+        File.write(
+          'app/views/employees/show.html.erb',
+          "<%# controller_class: MyBaseController %>\n<div></div>\n"
+        )
+        File.write('.sorbet_erb.yml', YAML.dump({ 'input_dirs' => ['app'], 'output_dir' => 'out' }))
+
+        SorbetErb.extract_rb_from_erb(nil, nil)
+
+        out = File.read('out/views/employees/show.html.erb.generated.rb')
+        assert_match(/class SorbetErb\w+ < MyBaseController/, out)
+      end
+    end
+  end
+
+  def test_controller_class_annotation_overrides_app_controller_class_config
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        FileUtils.mkdir_p('app/views/users')
+        File.write(
+          'app/views/users/show.html.erb',
+          "<%# controller_class: UserMailer %>\n<div></div>\n"
+        )
+        File.write(
+          '.sorbet_erb.yml',
+          YAML.dump({ 'input_dirs' => ['app'], 'output_dir' => 'out', 'app_controller_class' => 'CustomBase' })
+        )
+
+        SorbetErb.extract_rb_from_erb(nil, nil)
+
+        out = File.read('out/views/users/show.html.erb.generated.rb')
+        assert_match(/class SorbetErb\w+ < UserMailer/, out)
+        refute_match(/CustomBase/, out)
+      end
+    end
+  end
+
   def test_app_controller_class_override
     Dir.mktmpdir do |dir|
       Dir.chdir(dir) do

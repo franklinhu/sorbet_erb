@@ -84,11 +84,47 @@ class CodeExtractorTest < Minitest::Spec
         ],
         locals: '(a:, b:)',
         locals_sig: 'sig { params(a: Integer, b: String).void }'
+      },
+      {
+        name: 'controller_class annotation',
+        input: <<~INPUT,
+          <%# controller_class: MyBaseController %>
+          <%= @something %>
+        INPUT
+        output: [
+          ' @something '
+        ],
+        locals: nil,
+        controller_class: 'MyBaseController'
+      },
+      {
+        name: 'controller_class annotation with no space',
+        input: <<~INPUT,
+          <%# controller_class:UserMailer %>
+          <%= @something %>
+        INPUT
+        output: [
+          ' @something '
+        ],
+        locals: nil,
+        controller_class: 'UserMailer'
+      },
+      {
+        name: 'controller_class with namespaced class',
+        input: <<~INPUT,
+          <%# controller_class: MyNamespace::MyMailer %>
+          <%= @something %>
+        INPUT
+        output: [
+          ' @something '
+        ],
+        locals: nil,
+        controller_class: 'MyNamespace::MyMailer'
       }
     ]
     test_cases.each do |tc|
       e = SorbetErb::CodeExtractor.new
-      actual, locals, locals_sig = e.extract(tc[:input])
+      actual, locals, locals_sig, controller_class = e.extract(tc[:input])
       assert_equal(tc[:output], actual, tc[:name])
       if tc[:locals].nil?
         assert_nil(locals, tc[:name])
@@ -100,6 +136,12 @@ class CodeExtractorTest < Minitest::Spec
         assert_nil(locals_sig, tc[:name])
       else
         assert_equal(tc[:locals_sig], locals_sig, tc[:name])
+      end
+
+      if tc[:controller_class].nil?
+        assert_nil(controller_class, tc[:name])
+      else
+        assert_equal(tc[:controller_class], controller_class, tc[:name])
       end
     end
   end
