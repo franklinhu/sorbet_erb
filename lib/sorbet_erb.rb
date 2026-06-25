@@ -90,7 +90,7 @@ module SorbetErb
       next if exclude_paths.any? { |excluded| pathname.to_s.include?(excluded) }
 
       extractor = CodeExtractor.new
-      lines, locals, locals_sig = extractor.extract(File.read(p))
+      lines, locals, locals_sig, controller_class = extractor.extract(File.read(p))
 
       # Partials and Turbo streams must use strict locals
       next if requires_defined_locals?(pathname.basename.to_s) && locals.nil? && skip_missing_locals
@@ -99,6 +99,7 @@ module SorbetErb
       locals_sig ||= ''
 
       class_name, extend_app_controller = class_name_from_path(pathname)
+      parent_class = controller_class || config.app_controller_class
 
       rel_output_dir = File.join(
         output_dir,
@@ -114,7 +115,7 @@ module SorbetErb
       File.open(output_path, 'w') do |f|
         result = erb.result_with_hash(
           class_name: class_name,
-          class_decl_suffix: extend_app_controller ? " < #{config.app_controller_class}" : '',
+          class_decl_suffix: extend_app_controller ? " < #{parent_class}" : '',
           locals: locals,
           locals_sig: locals_sig,
           extra_includes: config.extra_includes,
