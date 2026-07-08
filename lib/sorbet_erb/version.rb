@@ -2,5 +2,5 @@
 # frozen_string_literal: true
 
 module SorbetErb
-  VERSION = '0.9.0-unreleased'
+  VERSION = '0.10.0-unreleased'
 end
