@@ -23,8 +23,6 @@ Gem::Specification.new do |spec|
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  # Opt-in filter: only ship runtime code and docs. In particular this excludes the
-  # ~11 MB of development-only `sorbet/rbi` files that are not needed at runtime.
   spec.files = Dir.chdir(__dir__) do
     `git ls-files -z`.split("\x0").select do |f|
       f.start_with?('lib/', 'exe/', 'sig/') ||
