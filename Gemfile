@@ -13,7 +13,7 @@ group :development, :test do
   gem 'rubocop-sorbet', '~> 0.10.1'
 
   # Runtime dependencies for Tapioca compiler
-  gem 'rails', '~> 7.1.3'
+  gem 'rails', '>= 7.1.3'
   gem 'view_component', '~> 4.12.0'
 
   # Before Ruby 4, ostruct was included as part of stdlib, and
